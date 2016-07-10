@@ -31,8 +31,8 @@ sub base :Chained('/') :PathPart('bot') :CaptureArgs(0) {
     my ($self, $c) = @_;
     # used when setting up the fb bot.
     my $params = $c->req->params;
-    if ($params->{'hub.verify_token'} && $params->{'hub.verify_token'} =~ m{'this_seems_like_fun'}xms) {
-        return $c->response->body($params->{'hub.challend'});
+    if ($params->{'hub.verify_token'} && $params->{'hub.verify_token'} =~ m{this_seems_like_fun}xms) {
+        return $c->response->body($params->{'hub.challenge'});
     }
 }
 
