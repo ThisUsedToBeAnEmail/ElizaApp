@@ -3,10 +3,6 @@ package Chatbot::Eliza::Option;
 use Moo;
 use Chatbot::Eliza::ScriptParser;
 
-use experimental qw[
-    signatures
-];
-
 my %fields = (
     name => 'Eliza',
     script_file => '',
@@ -36,20 +32,23 @@ has 'data' => (
     builder => 'build_data'
 );
 
-sub build_data ($self) {
+sub build_data {
+    my $self = shift;
     my $parser = Chatbot::Eliza::ScriptParser->new(script_file => $self->script_file);
     $parser->parse_script_data;
     return $parser;
 }
 
-sub myrand ($self, $max) {
+sub myrand {
+    my ($self, $max) = @_;
     my $n = defined $max ? $max : 1;
     return rand($n);
 }
 
-sub welcome_message ($self) {
+sub welcome_message {
+    my $self = shift;
     my $initial = $self->data->initial;
-    return $initial->[ $self->myrand( scalar $initial->@* ) ];
+    return $initial->[ $self->myrand( scalar @{$initial} ) ];
 }
 
 1;

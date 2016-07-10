@@ -2,11 +2,6 @@ package Chatbot::Eliza::ScriptParser;
 
 use Moo;
 
-use feature 'say';
-use experimental qw[
-    signatures
-];
-
 has 'script_file' => (
     is => 'rw',
     default => q{},
@@ -34,7 +29,8 @@ while ( my( $key, $value ) = each %data ) {
     );
 }
 
-sub parse_script_data ($self) {
+sub parse_script_data {
+    my $self = shift;
     my @script_lines = $self->_open_script_file($self->script_file);
     my ($thiskey, $decomp);
     # Examine each line of the script data
@@ -53,18 +49,18 @@ sub parse_script_data ($self) {
         $entry = _trim_string($entry);
     
         for ($entry_type) {
-            /quit|initial|final/ and do { push $self->$_->@*, $entry; last; };
+            /quit|initial|final/ and do { push @{$self->$_}, $entry; last; };
             /decomp/ and do {
                 die "$0: error parsing script: decomp rule with no keyword. \n"
                     unless $thiskey;
                 $decomp = join($;, $thiskey, $entry);
-                push $self->$_->{$thiskey}->@*, $entry;
+                push @{$self->$_->{$thiskey}}, $entry;
                 last;
             };
             /reasmb|reasmb_for_mempory/ and do {
                 die "$0: error parsing scrip reassembly rule with no decomposition rule" 
                     unless $decomp;
-                push $self->$_->{$decomp}->@*, $entry;
+                push @{$self->$_->{$decomp}}, $entry;
                 last;
             };
             # everything else we have a key - split on first space
@@ -81,7 +77,8 @@ sub parse_script_data ($self) {
     }
 }
 
-sub _unique_words ($self, $line) {
+sub _unique_words {
+    my ($self, $line) = @_;
     $line =~ s/[^a-zA-Z\'\s+]//g;
     my @words = split(' ', $line); 
     foreach my $word ( @words ) {
@@ -90,12 +87,14 @@ sub _unique_words ($self, $line) {
     return;
 };
 
-sub _trim_string ($string) {
+sub _trim_string {
+    my $string = shift;
     $string =~ s/^\s+|\s+$//g;
     return $string;
 }
 
-sub _open_script_file ($self, $script_file) {    
+sub _open_script_file {    
+    my ($self, $script_file) = @_;
     my @script_lines;
     if ($script_file) {
         # If we have an external script file, open it

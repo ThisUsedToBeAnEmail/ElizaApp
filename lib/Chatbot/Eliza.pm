@@ -8,10 +8,6 @@ use Chatbot::Eliza::Brain;
 
 use Moo;
 
-use experimental qw[
-    signatures
-];
-
 my @user_options = qw(name script_file debug prompts_on memory_on);
 foreach my $field (@user_options) {
     has $field => (
@@ -26,7 +22,8 @@ has 'brain' => (
     builder => '_build_brain',
 );
 
-sub _build_brain ($self) {
+sub _build_brain {
+    my $self = shift;
     my $options = Chatbot::Eliza::Option->new();
     foreach my $field (@user_options) {
         if (my $val = $self->$field) {
@@ -36,7 +33,8 @@ sub _build_brain ($self) {
     return Chatbot::Eliza::Brain->new(options => $options);
 }
 
-sub command_interface ($self) {
+sub command_interface {
+    my $self = shift;
     my ($reply, $previous_user_input, $user_input) = "";
     
     my $options = $self->brain->options;
@@ -97,7 +95,8 @@ sub command_interface ($self) {
    }
 }
 
-sub instance ($self, $user_input) {
+sub instance {
+    my ($self, $user_input) = @_;
     return $self->brain->transform($user_input, '');
 }
 
