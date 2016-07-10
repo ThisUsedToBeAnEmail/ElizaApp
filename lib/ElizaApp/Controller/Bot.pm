@@ -2,6 +2,9 @@ package ElizaApp::Controller::Bot;
 use Moose;
 use namespace::autoclean;
 use Chatbot::Eliza;
+use LWP::UserAgent;
+use HTTP::Request;
+use JSON;
 
 BEGIN { extends 'ElizaApp::Controller' }
 use feature qw/say/;
