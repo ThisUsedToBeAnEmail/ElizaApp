@@ -43,7 +43,7 @@ sub eliza :Chained('base') :PathPart('eliza') :Args(0) {
 
     my $eliza = Chatbot::Eliza->new();
     my $message = $eliza->instance($text);
-    $self->send_fb_message($message, $fb);
+    $self->send_fb_message({text => $message}, $fb);
 }
 
 # use what I know first - LWP::UserAgent
