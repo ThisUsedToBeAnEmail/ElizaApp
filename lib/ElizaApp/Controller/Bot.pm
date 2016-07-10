@@ -12,7 +12,6 @@ use feature qw/say/;
 # Sets the actions in this controller to be registered with no prefix
 # so they function identically to actions created in MyApp.pm
 #
-__PACKAGE__->config(namespace => '');
 
 =encoding utf-8
 
@@ -42,11 +41,16 @@ sub eliza :Chained('base') :PathPart('eliza') :Args(0) {
 
     my $body = $c->request->body_data;
     my $fb = $body->{entry}[0]->{messaging}[0];
-    my $text = $fb->{message}->{text};
+    my $text = $fb ? $fb->{message}->{text} : $c->req->param('input');
 
     my $eliza = Chatbot::Eliza->new();
     my $message = $eliza->instance($text);
-    $self->send_fb_message({text => $message}, $fb);
+    if ($fb) {
+        $self->send_fb_message({text => $message}, $fb);
+    }
+    else {
+        $c->stash->{message} = $message;
+    }
 }
 
 # use what I know first - LWP::UserAgent
